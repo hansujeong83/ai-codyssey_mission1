@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Codyssey Mission 1</title>
+  <style>
+    :root { color-scheme: light; font-family: system-ui, sans-serif; }
+    body { margin: 0; min-height: 100vh; display: grid; place-items: center;
+           background: #f1f5f2; color: #18352b; }
+    main { width: min(720px, calc(100% - 40px)); padding: 42px; border-radius: 22px;
+           background: white; box-shadow: 0 18px 50px #18352b18; }
+    h1 { margin-top: 0; font-size: clamp(2rem, 5vw, 3.2rem); }
+    .tag { display: inline-block; padding: 7px 12px; border-radius: 99px;
+           background: #e0eee5; color: #246044; font-weight: 700; }
+    li { margin: 10px 0; }
+  </style>
+</head>
+<body>
+  <main>
+    <span class="tag">DOCKER · NGINX · PORT MAPPING</span>
+    <h1>Codyssey Mission 1</h1>
+    <p>컨테이너 안에서 실행되는 웹 서버에 성공적으로 접속했습니다.</p>
+    <ul>
+      <li>이미지: codyssey-mission1-web:1.0</li>
+      <li>컨테이너 포트: 80</li>
+      <li>호스트 포트: 8080</li>
+    </ul>
+    <p>이 문구를 수정하고 바인드 마운트로 변경 사항을 확인해 보세요.</p>
+  </main>
+</body>
+</html>
