@@ -30,7 +30,7 @@ bash verify_env.sh
 ```
 PowerShell에서는:
 ```powershell
-.\\verify_env.ps1
+.\verify_env.ps1
 ```
 
 `docker --version`은 CLI 설치 여부만 확인합니다. `docker info`가 성공해야 엔진 연결까지 확인된 것입니다.
@@ -53,8 +53,8 @@ rm renamed.txt
 
 PowerShell 대응:
 ```powershell
-New-Item -ItemType Directory -Force .\\practice
-Set-Location .\\practice
+New-Item -ItemType Directory -Force .\practice
+Set-Location .\practice
 Get-Location
 Set-Content sample.txt "Codyssey Mission 1"
 Get-Content sample.txt
@@ -145,8 +145,8 @@ docker rm -f codyssey-mission1-web
 
 저장소 루트에서 Ubuntu Bash:
 ```bash
-docker run -d --name codyssey-bind -p 8081:80 \\
-  --mount type=bind,source="$(pwd)/app",target=/usr/share/nginx/html,readonly \\
+docker run -d --name codyssey-bind -p 8081:80 \
+  --mount type=bind,source="$(pwd)/app",target=/usr/share/nginx/html,readonly \
   nginx:1.27-alpine
 ```
 
