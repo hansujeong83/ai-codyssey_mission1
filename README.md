@@ -249,19 +249,22 @@ docker compose down
 ## 포트 충돌 확인과 해제
 `port is already allocated` 오류가 나면 해당 포트를 쓰는 프로세스를 찾습니다.
 ```bash
-# Ubuntu/WSL
+# Ubuntu/WSL: 포트 점유 상태 확인
 ss -ltnp | grep ':8080'
 lsof -i :8080
-docker ps --filter "publish=8080"      # 내 컨테이너가 쓰는지 확인
-docker rm -f <컨테이너이름>              # 내 컨테이너면 정리
-kill <PID>                              # 다른 프로세스라면 확인 후 종료
+docker ps --filter "publish=8080"   # Docker 컨테이너가 게시 중인지 확인
+# lsof가 설치되어 있으면 PID와 프로세스 확인
+PID=$(lsof -t -iTCP:8080 -sTCP:LISTEN 2>/dev/null | head -n1)
+if [ -n "$PID" ]; then ps -fp "$PID"; fi
 ```
 ```powershell
-# PowerShell
+# PowerShell: PID와 프로세스 확인
 netstat -ano | findstr :8080
-Stop-Process -Id <PID>
+$conn = Get-NetTCPConnection -LocalPort 8080 -State Listen -ErrorAction SilentlyContinue
+$conn | Format-Table LocalAddress, LocalPort, OwningProcess
+if ($conn) { Get-Process -Id $conn.OwningProcess }
 ```
-`ss` 또는 `lsof` 결과에서 PID를 확인한 뒤 `ps -fp PID`로 프로세스가 무엇인지 먼저 확인합니다. 본인이 종료해도 되는 프로세스일 때만 `kill -TERM PID`를 실행합니다. Docker 컨테이너가 점유 중이면 `docker rm -f 컨테이너이름`으로 해당 컨테이너를 정리합니다. 다른 서비스일 수 있으므로 확인 없이 PID를 종료하지 마세요. 종료하기 어렵다면 `-p 8082:80`처럼 비어 있는 다른 호스트 포트를 쓰면 됩니다.
+먼저 프로세스 이름과 용도를 확인합니다. 내가 실행한 컨테이너라면 실제 컨테이너 이름을 확인해 `docker rm -f codyssey-mission1-web`처럼 정리합니다. 다른 프로세스라면 종료해도 되는지 확인한 뒤에만 Linux의 `kill -TERM "$PID"` 또는 PowerShell의 `Stop-Process -Id 실제_PID`를 사용합니다. 다른 서비스일 수 있으므로 확인 없이 PID를 종료하지 마세요. 종료하기 어렵다면 `-p 8082:80`처럼 비어 있는 다른 호스트 포트를 쓰면 됩니다.
 
 ## 11. 자동 실행 로그 생성
 
