@@ -101,7 +101,7 @@ echo "HTTP response from http://localhost:18080:"
 if curl --fail --silent --show-error http://localhost:8080/; then
   PASS=$((PASS + 1)); echo "[PASS] Port mapping 8080:80"
 else
-  FAIL=$((FAIL + 1)); echo "[FAIL] Port mapping 18080:80"
+  FAIL=$((FAIL + 1)); echo "[FAIL] Port mapping 8080:80"
 fi
 echo "Container logs:"; docker logs "$WEB" || true
 echo "Container status:"; docker ps --filter "name=$WEB"
@@ -116,7 +116,7 @@ echo "Before host-side edit:"
 curl --fail --silent --show-error http://localhost:8081/ | grep -F "Codyssey Mission 1"
 printf '\n<!-- bind-mount-change-verified -->\n' >> "$WORK/app/index.html"
 echo "After host-side edit:"
-if curl --fail --silent --show-error http://localhost:18081/ | grep -F "bind-mount-change-verified"; then
+if curl --fail --silent --show-error http://localhost:8081/ | grep -F "bind-mount-change-verified"; then
   PASS=$((PASS + 1)); echo "[PASS] Host file change appeared in container"
 else
   FAIL=$((FAIL + 1)); echo "[FAIL] Bind mount live change"
@@ -152,10 +152,10 @@ if docker compose version; then
     else
       FAIL=$((FAIL + 1)); echo "[FAIL] Compose web service HTTP check"
     fi
-    WEB_PORT=18082 docker compose -p "$COMPOSE_PROJECT" down
+    WEB_PORT=8082 docker compose -p "$COMPOSE_PROJECT" down
   else
     FAIL=$((FAIL + 1)); echo "[FAIL] Compose up"
-    WEB_PORT=18082 docker compose -p "$COMPOSE_PROJECT" down >/dev/null 2>&1 || true
+    WEB_PORT=8082 docker compose -p "$COMPOSE_PROJECT" down >/dev/null 2>&1 || true
   fi
 else
   echo "[INFO] Docker Compose plugin is unavailable; optional bonus test not run."
@@ -163,8 +163,15 @@ fi
 
 section "9. Git repository status (credentials are not printed)"
 git status --short --branch
+git remote -v
 git branch --show-current
 git log -1 --oneline
+if git remote get-url origin >/dev/null 2>&1; then
+  echo "Checking read access to origin (no files are pushed):"
+  git ls-remote origin HEAD
+else
+  echo "[INFO] No origin remote configured in this local checkout."
+fi
 
 section "Result summary"
 echo "PASS=$PASS"
