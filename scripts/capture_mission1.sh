@@ -97,7 +97,7 @@ section "5. Custom NGINX image, port mapping, logs and health"
 check "Build custom image" docker build -t codyssey-mission1-web:1.0 .
 check "Run web container" docker run -d --name "$WEB" -p 8080:80 codyssey-mission1-web:1.0
 sleep 2
-echo "HTTP response from http://localhost:18080:"
+echo "HTTP response from http://localhost:8080:"
 if curl --fail --silent --show-error http://localhost:8080/; then
   PASS=$((PASS + 1)); echo "[PASS] Port mapping 8080:80"
 else
