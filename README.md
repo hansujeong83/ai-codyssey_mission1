@@ -124,6 +124,19 @@ docker logs codyssey-ubuntu
 docker rm codyssey-ubuntu
 ```
 
+실행 중인 컨테이너의 리소스와 접속 방식 차이도 확인합니다(요구 사항: `docker stats`, attach/exec 비교).
+```bash
+docker run -d --name codyssey-sleep ubuntu:24.04 sleep 600
+docker stats --no-stream codyssey-sleep
+docker exec -it codyssey-sleep bash      # 새 프로세스로 접속: exit 해도 컨테이너는 계속 실행
+docker ps                                 # 여전히 Up 상태인지 확인
+docker attach codyssey-sleep              # 메인 프로세스(sleep)에 연결: Ctrl+P, Ctrl+Q로 분리
+docker rm -f codyssey-sleep
+```
+- `exec`: 실행 중인 컨테이너에 새 프로세스를 추가합니다. 종료해도 컨테이너에 영향이 없습니다.
+- `attach`: 컨테이너의 메인 프로세스 입출력에 붙습니다. 메인 프로세스가 끝나면 컨테이너도 종료됩니다.
+- 관찰한 결과는 본인 실행 출력으로 `docs/evidence/`에 캡처해 첨부하세요.
+
 ## 6. Dockerfile 웹 서버와 포트 매핑
 
 저장소 루트에서:
