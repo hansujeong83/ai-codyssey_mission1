@@ -30,7 +30,7 @@ bash verify_env.sh
 ```
 PowerShell에서는:
 ```powershell
-.\verify_env.ps1
+.\\verify_env.ps1
 ```
 
 `docker --version`은 CLI 설치 여부만 확인합니다. `docker info`가 성공해야 엔진 연결까지 확인된 것입니다.
@@ -53,8 +53,8 @@ rm renamed.txt
 
 PowerShell 대응:
 ```powershell
-New-Item -ItemType Directory -Force .\practice
-Set-Location .\practice
+New-Item -ItemType Directory -Force .\\practice
+Set-Location .\\practice
 Get-Location
 Set-Content sample.txt "Codyssey Mission 1"
 Get-Content sample.txt
@@ -134,7 +134,7 @@ docker ps
 docker logs codyssey-mission1-web
 ```
 
-브라우저에서 `http://localhost:8080` 접속합니다. 호스트 8080 포트를 컨테이너 80 포트에 연결한 것입니다. 자동 점검 스크립트는 `bash scripts/run_web.sh`입니다.
+브라우저에서 `http://localhost:8080` 접속합니다. 호스트 8080 포트를 컨테이너 80 포트에 연결한 것입니다.
 
 정리:
 ```bash
@@ -145,8 +145,8 @@ docker rm -f codyssey-mission1-web
 
 저장소 루트에서 Ubuntu Bash:
 ```bash
-docker run -d --name codyssey-bind -p 8081:80 \
-  --mount type=bind,source="$(pwd)/app",target=/usr/share/nginx/html,readonly \
+docker run -d --name codyssey-bind -p 8081:80 \\
+  --mount type=bind,source="$(pwd)/app",target=/usr/share/nginx/html,readonly \\
   nginx:1.27-alpine
 ```
 
@@ -197,7 +197,22 @@ docker compose down
 | 권한 오류 | 파일 권한 또는 공유 경로 | 최소 권한 확인, WSL 파일 경로 사용 |
 | sudo 권한 제한 | 교육기관 정책 | 임의 우회 금지. 강의에서 지정한 OrbStack 등 승인 런타임 사용 여부를 담당자에게 확인 |
 
-## 11. 완료 판정 체크리스트
+## 11. 자동 실행 로그 생성
+
+저장소 루트에서 다음을 실행하면 현재 PC에서 실제로 수행한 터미널 명령과 결과가 로그 파일에 기록됩니다.
+
+```bash
+bash scripts/capture_mission1.sh
+```
+
+생성 결과:
+- `docs/evidence/terminal-session.txt`: 환경, 파일 조작, 권한, Docker, 포트, 바인드 마운트, 볼륨 및 Git 상태의 실제 실행 로그
+- 스크립트는 Docker 엔진에 연결할 수 없으면 Docker 실습을 완료로 표시하지 않고 중단합니다.
+- 브라우저 주소창, VS Code/GitHub 연동 등 화면 증거는 실제 PC에서 직접 캡처해야 합니다. 자동 생성 이미지나 예시 이미지를 실제 수행 증거로 제출하지 않습니다.
+
+상세 개념 설명은 [기술 개념 및 평가자 안내](docs/TECHNICAL_GUIDE.md), 캡처 기준은 [증거 수집 안내](docs/evidence/README.md)를 참고합니다.
+
+## 12. 완료 판정 체크리스트
 
 - [ ] 환경 점검 스크립트 결과 확인
 - [ ] 터미널 파일 조작과 chmod 전후 확인
@@ -210,4 +225,4 @@ docker compose down
 - [ ] Compose 실행·종료
 - [ ] 실제 화면 캡처 10개를 `docs/evidence/`에 추가
 
-상세 캡처 기준은 [`docs/evidence/README.md`](docs/evidence/README.md)를 따릅니다.
+상세 캡처 기준은 [docs/evidence/README.md](docs/evidence/README.md)를 따릅니다.
