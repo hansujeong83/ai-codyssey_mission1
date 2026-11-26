@@ -95,11 +95,11 @@ docker rm -f "$UBUNTU"
 
 section "5. Custom NGINX image, port mapping, logs and health"
 check "Build custom image" docker build -t codyssey-mission1-web:1.0 .
-check "Run web container" docker run -d --name "$WEB" -p 18080:80 codyssey-mission1-web:1.0
+check "Run web container" docker run -d --name "$WEB" -p 8080:80 codyssey-mission1-web:1.0
 sleep 2
 echo "HTTP response from http://localhost:18080:"
-if curl --fail --silent --show-error http://localhost:18080/; then
-  PASS=$((PASS + 1)); echo "[PASS] Port mapping 18080:80"
+if curl --fail --silent --show-error http://localhost:8080/; then
+  PASS=$((PASS + 1)); echo "[PASS] Port mapping 8080:80"
 else
   FAIL=$((FAIL + 1)); echo "[FAIL] Port mapping 18080:80"
 fi
@@ -110,10 +110,10 @@ docker rm -f "$WEB"
 
 section "6. Bind mount live-change verification"
 cp -R "$ROOT/app" "$WORK/app"
-check "Start bind-mounted NGINX" docker run -d --name "$BIND" -p 18081:80 --mount "type=bind,source=$WORK/app,target=/usr/share/nginx/html,readonly" nginx:1.27-alpine
+check "Start bind-mounted NGINX" docker run -d --name "$BIND" -p 8081:80 --mount "type=bind,source=$WORK/app,target=/usr/share/nginx/html,readonly" nginx:1.27-alpine
 sleep 2
 echo "Before host-side edit:"
-curl --fail --silent --show-error http://localhost:18081/ | grep -F "Codyssey Mission 1"
+curl --fail --silent --show-error http://localhost:8081/ | grep -F "Codyssey Mission 1"
 printf '\n<!-- bind-mount-change-verified -->\n' >> "$WORK/app/index.html"
 echo "After host-side edit:"
 if curl --fail --silent --show-error http://localhost:18081/ | grep -F "bind-mount-change-verified"; then
@@ -143,12 +143,12 @@ docker volume rm "$VOL"
 section "8. Compose configuration"
 if docker compose version; then
   COMPOSE_PROJECT="${TAG}-compose"
-  echo "Starting Compose service on host port 18082."
-  if WEB_PORT=18082 docker compose -p "$COMPOSE_PROJECT" up -d --build; then
+  echo "Starting Compose service on host port 8082."
+  if WEB_PORT=8082 docker compose -p "$COMPOSE_PROJECT" up -d --build; then
     docker compose -p "$COMPOSE_PROJECT" ps
     docker compose -p "$COMPOSE_PROJECT" logs --no-color
-    if curl --fail --silent --show-error http://localhost:18082/ >/dev/null; then
-      PASS=$((PASS + 1)); echo "[PASS] Compose web service responded on port 18082"
+    if curl --fail --silent --show-error http://localhost:8082/ >/dev/null; then
+      PASS=$((PASS + 1)); echo "[PASS] Compose web service responded on port 8082"
     else
       FAIL=$((FAIL + 1)); echo "[FAIL] Compose web service HTTP check"
     fi
