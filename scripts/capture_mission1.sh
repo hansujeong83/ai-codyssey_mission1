@@ -173,6 +173,7 @@ if [[ "$FAIL" -eq 0 ]]; then
   echo "RESULT=PASS (all executed required checks succeeded)"
 else
   echo "RESULT=PARTIAL (review [FAIL] entries above and rerun)"
+  exit 1
 fi
 echo "Evidence log: docs/evidence/terminal-session.txt"
 echo "Screenshots must still be captured manually; this script does not create or imitate screenshots."
