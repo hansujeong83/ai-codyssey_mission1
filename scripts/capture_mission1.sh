@@ -142,9 +142,21 @@ docker volume rm "$VOL"
 
 section "8. Compose configuration"
 if docker compose version; then
-  echo "Compose plugin is available. Compose service is defined in docker-compose.yml."
-  echo "To avoid colliding with an existing service on port 8080, run separately when free:"
-  echo "docker compose up -d --build && docker compose ps && docker compose logs && docker compose down"
+  COMPOSE_PROJECT="${TAG}-compose"
+  echo "Starting Compose service on host port 18082."
+  if WEB_PORT=18082 docker compose -p "$COMPOSE_PROJECT" up -d --build; then
+    docker compose -p "$COMPOSE_PROJECT" ps
+    docker compose -p "$COMPOSE_PROJECT" logs --no-color
+    if curl --fail --silent --show-error http://localhost:18082/ >/dev/null; then
+      PASS=$((PASS + 1)); echo "[PASS] Compose web service responded on port 18082"
+    else
+      FAIL=$((FAIL + 1)); echo "[FAIL] Compose web service HTTP check"
+    fi
+    WEB_PORT=18082 docker compose -p "$COMPOSE_PROJECT" down
+  else
+    FAIL=$((FAIL + 1)); echo "[FAIL] Compose up"
+    WEB_PORT=18082 docker compose -p "$COMPOSE_PROJECT" down >/dev/null 2>&1 || true
+  fi
 else
   echo "[INFO] Docker Compose plugin is unavailable; optional bonus test not run."
 fi
